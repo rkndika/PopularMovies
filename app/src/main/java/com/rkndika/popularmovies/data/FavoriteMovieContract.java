@@ -36,6 +36,12 @@ public class FavoriteMovieContract {
         public static final String COLUMN_ADULT = "adult";
         public static final String COLUMN_OVERVIEW = "overview";
         public static final String COLUMN_RELEASE_DATE = "releaseDate";
+
+        public static Uri buildFavoriteUriWithId(int id) {
+            return CONTENT_URI.buildUpon()
+                    .appendPath(Integer.toString(id))
+                    .build();
+        }
     }
 
 }

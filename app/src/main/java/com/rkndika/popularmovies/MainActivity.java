@@ -12,7 +12,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -25,8 +24,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import com.rkndika.popularmovies.adapter.CustomCursorAdapter;
 import com.rkndika.popularmovies.adapter.MovieAdapter;
+import com.rkndika.popularmovies.data.FavoriteMovieContract;
 import com.rkndika.popularmovies.model.Movie;
 import com.rkndika.popularmovies.model.Movies;
 import com.rkndika.popularmovies.network.Client;
@@ -36,16 +35,11 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements MovieAdapter.MovieAdapterOnClickHandler,
-        CustomCursorAdapter.CustomCursorAdapterOnClickHandler,
         LoaderManager.LoaderCallbacks<Cursor>{
 
     // Constants for logging and referring to a unique loader
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int TASK_LOADER_ID = 0;
-
-    // Member variables for the adapter and RecyclerView
-    private CustomCursorAdapter mAdapter;
-    private RecyclerView mRecyclerViewFavorite;
 
     // final string for intent
     public static final String PUT_EXTRA_MOVIES = "movies";
@@ -92,6 +86,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
             // load data from The Movie DB API
             loadMoviesData();
         }
+
+
+        //getSupportLoaderManager().initLoader(TASK_LOADER_ID, null, this);
     }
 
     private void initViews(){
@@ -119,17 +116,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
                 swipeContainer.setRefreshing(false);
             }
         });
-
-        // Set the RecyclerView to its corresponding view
-        mRecyclerViewFavorite = (RecyclerView) findViewById(R.id.recyclerview_movies_favorite);
-
-        // Set the layout for the RecyclerView to be a linear layout, which measures and
-        // positions items within a RecyclerView into a linear list
-        mRecyclerViewFavorite.setLayoutManager(new LinearLayoutManager(this));
-
-        // Initialize the adapter and attach it to the RecyclerView
-        mAdapter = new CustomCursorAdapter(this);
-        mRecyclerViewFavorite.setAdapter(mAdapter);
     }
 
     // get number of grid's coloum dynamically
@@ -155,6 +141,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         else if(sortType == TOP_RATED_SORT_TYPE){
             setTitle(getString(R.string.top_rated_title));
         }
+        else if(sortType == FAVORITE_SORT_TYPE){
+            setTitle(getString(R.string.favorite_title));
+        }
 
         // get data from previous data
         ArrayList<Movie> movieList = savedInstanceState.getParcelableArrayList(STATE_RECYCLERVIEW_DATA);
@@ -176,8 +165,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     }
 
     private void loadMoviesData() {
-        swipeContainer.setVisibility(View.VISIBLE);
-        mRecyclerViewFavorite.setVisibility(View.GONE);
         showMoviesDataView();
 
         // show loading
@@ -283,8 +270,16 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     private void refreshMoviesData(){
         // delete all old data
         mMovieAdapter.setMoviesData(null);
-        // load new data from API
-        loadMoviesData();
+
+        if(sortType == FAVORITE_SORT_TYPE){
+            showMoviesDataView();
+            getSupportLoaderManager().restartLoader(TASK_LOADER_ID, null, this);
+        }
+        else {
+            // load new data from API
+            loadMoviesData();
+        }
+
     }
 
     @Override
@@ -326,17 +321,11 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         else if(id == R.id.action_sort_by_favorite){
             sortType = FAVORITE_SORT_TYPE;
             setTitle(getString(R.string.favorite_title));
-            showFavorites();
+            refreshMoviesData();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    private void showFavorites(){
-        swipeContainer.setVisibility(View.GONE);
-        mRecyclerViewFavorite.setVisibility(View.VISIBLE);
-        getSupportLoaderManager().initLoader(TASK_LOADER_ID, null, this);
     }
 
     @Override
@@ -383,8 +372,18 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
             // loadInBackground() performs asynchronous loading of data
             @Override
             public Cursor loadInBackground() {
-                // Will implement to load data
-                return null;
+                try {
+                    return getContentResolver().query(FavoriteMovieContract.FavoriteMovieEntry.CONTENT_URI,
+                            null,
+                            null,
+                            null,
+                            FavoriteMovieContract.FavoriteMovieEntry._ID);
+
+                } catch (Exception e) {
+                    Log.e(TAG, "Failed to asynchronously load data.");
+                    e.printStackTrace();
+                    return null;
+                }
             }
 
             // deliverResult sends the result of the load, a Cursor, to the registered listener
@@ -396,29 +395,17 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
     }
 
-    /**
-     * Called when a previously created loader has finished its load.
-     *
-     * @param loader The Loader that has finished.
-     * @param data The data generated by the Loader.
-     */
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         // Update the data that the adapter uses to create ViewHolders
-        mAdapter.swapCursor(data);
+        // mAdapter.swapCursor(data);
+
+        mMovieAdapter.setMoviesData(cursorToMovies(data));
     }
 
-
-    /**
-     * Called when a previously created loader is being reset, and thus
-     * making its data unavailable.
-     * onLoaderReset removes any references this activity had to the loader's data.
-     *
-     * @param loader The Loader that is being reset.
-     */
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        mAdapter.swapCursor(null);
+        mMovieAdapter.setMoviesData(null);
     }
 
     @Override
@@ -429,5 +416,45 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
             // re-queries for all tasks
             getSupportLoaderManager().restartLoader(TASK_LOADER_ID, null, this);
         }
+    }
+
+
+    private ArrayList<Movie> cursorToMovies(Cursor mCursor){
+
+        int voteCountIndex = mCursor.getColumnIndex(FavoriteMovieContract.FavoriteMovieEntry.COLUMN_VOTE_COUNT);
+        int idMovieIndex = mCursor.getColumnIndex(FavoriteMovieContract.FavoriteMovieEntry.COLUMN_ID);
+        int videoIndex = mCursor.getColumnIndex(FavoriteMovieContract.FavoriteMovieEntry.COLUMN_VIDEO);
+        int voteAverageIndex = mCursor.getColumnIndex(FavoriteMovieContract.FavoriteMovieEntry.COLUMN_VOTE_AVERAGE);
+        int titleIndex = mCursor.getColumnIndex(FavoriteMovieContract.FavoriteMovieEntry.COLUMN_TITLE);
+        int popularityIndex = mCursor.getColumnIndex(FavoriteMovieContract.FavoriteMovieEntry.COLUMN_POPULARITY);
+        int posterPathIndex = mCursor.getColumnIndex(FavoriteMovieContract.FavoriteMovieEntry.COLUMN_POSTER_PATH);
+        int originalLanguageIndex = mCursor.getColumnIndex(FavoriteMovieContract.FavoriteMovieEntry.COLUMN_ORIGINAL_LANGUAGE);
+        int originalTitleIndex = mCursor.getColumnIndex(FavoriteMovieContract.FavoriteMovieEntry.COLUMN_ORIGINAL_TITLE);
+        int backdropPathIndex = mCursor.getColumnIndex(FavoriteMovieContract.FavoriteMovieEntry.COLUMN_BACKDROP_PATH);
+        int adultIndex = mCursor.getColumnIndex(FavoriteMovieContract.FavoriteMovieEntry.COLUMN_ADULT);
+        int overviewIndex = mCursor.getColumnIndex(FavoriteMovieContract.FavoriteMovieEntry.COLUMN_OVERVIEW);
+        int releaseDateIndex = mCursor.getColumnIndex(FavoriteMovieContract.FavoriteMovieEntry.COLUMN_RELEASE_DATE);
+
+        ArrayList<Movie> moviesFromCursor = new ArrayList<>();
+        for(mCursor.moveToFirst(); !mCursor.isAfterLast(); mCursor.moveToNext()){
+            Movie movie = new Movie(mCursor.getInt(voteCountIndex),
+                    mCursor.getInt(idMovieIndex),
+                    mCursor.getInt(videoIndex)>0,
+                    mCursor.getDouble(voteAverageIndex),
+                    mCursor.getString(titleIndex),
+                    mCursor.getDouble(popularityIndex),
+                    mCursor.getString(posterPathIndex),
+                    mCursor.getString(originalLanguageIndex),
+                    mCursor.getString(originalTitleIndex),
+                    mCursor.getString(backdropPathIndex),
+                    mCursor.getInt(adultIndex)>0,
+                    mCursor.getString(overviewIndex),
+                    mCursor.getString(releaseDateIndex)
+            );
+
+            moviesFromCursor.add(movie);
+        }
+
+        return moviesFromCursor;
     }
 }

@@ -6,6 +6,8 @@
     <string name="action_sort_by_popular">Sort By Popular</string>
     <string name="action_sort_by_top_rated">Sort By Top Rated</string>
     <string name="action_share">Share Trailer</string>
+    <string name="action_sort_by_favorite">Favorites</string>
+    <string name="action_favorite">Favorite</string>
 
     <!-- message -->
     <string name="error_message">
@@ -16,6 +18,8 @@
     </string>
     <string name="no_data_message">No Data</string>
     <string name="no_trailer_message">Trailer Not Found</string>
+    <string name="favorite_message">Favorited This Movie</string>
+    <string name="unfavorite_message">Unfavorited This Movie</string>
 
     <!-- title -->
     <string name="detail_title">Movie Detail</string>
@@ -24,6 +28,7 @@
     <string name="synopsis_title">Synopsis</string>
     <string name="reviews_title">Reviews</string>
     <string name="share_trailer_title">Share Trailer</string>
+    <string name="favorite_title">Favorite Movies</string>
 
     <!-- button -->
     <string name="trailer_button_text">Watch Trailer</string>
@@ -32,6 +37,4 @@
     <string name="unknown_date">Unknown</string>
     <string name="reviewed_by">Reviewed by</string>
     <string name="share_url_type">text/plain</string>
-    <string name="action_sort_by_favorite">Favorites</string>
-    <string name="favorite_title">Favorite</string>
 </resources>

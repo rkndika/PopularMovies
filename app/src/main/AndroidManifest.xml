@@ -24,6 +24,11 @@
             android:name="com.rkndika.popularmovies.DetailActivity"
             android:label="@string/detail_title"
             android:parentActivityName="com.rkndika.popularmovies.MainActivity"/>
+
+        <provider
+            android:name="com.rkndika.popularmovies.data.FavoriteMovieContentProvider"
+            android:authorities="com.rkndika.popularmovies"
+            android:exported="false"/>
     </application>
 
 </manifest>

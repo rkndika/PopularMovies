@@ -1,10 +1,15 @@
 package com.rkndika.popularmovies;
 
 import android.content.ActivityNotFoundException;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.Uri;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,6 +27,7 @@ import android.widget.Toast;
 
 import com.rkndika.popularmovies.adapter.ReviewAdapter;
 import com.rkndika.popularmovies.adapter.TrailerAdapter;
+import com.rkndika.popularmovies.data.FavoriteMovieContract;
 import com.rkndika.popularmovies.model.Reviews;
 import com.rkndika.popularmovies.model.Trailer;
 import com.rkndika.popularmovies.model.Trailers;
@@ -39,7 +45,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class DetailActivity extends AppCompatActivity implements TrailerAdapter.TrailerAdapterOnClickHandler {
+public class DetailActivity extends AppCompatActivity implements TrailerAdapter.TrailerAdapterOnClickHandler,
+        LoaderManager.LoaderCallbacks<Cursor>{
     private final static String YOUTUBE_APP = "vnd.youtube:";
     private final static String YOUTUBE_WEB = "http://www.youtube.com/watch?v=";
 
@@ -51,6 +58,15 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
     private ProgressBar mLoadingIndicatorReview, mLoadingIndicatorTrailer;
     private ReviewAdapter mReviewAdapter;
     private TrailerAdapter mTrailerAdapter;
+
+    private Menu menu;
+
+    private Boolean isFavorite;
+
+
+    // Constants for logging
+    private static final String TAG = DetailActivity.class.getSimpleName();
+    private static final int TASK_LOADER_ID = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,6 +138,9 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
                 .placeholder(R.drawable.rec_grey)
                 .error(R.drawable.rec_grey)
                 .into(ivPoster);
+
+
+
     }
 
     // method for parse date from "yyyy-MM-dd" format to "MMM d, yyyy" format
@@ -386,6 +405,11 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
         MenuInflater inflater = getMenuInflater();
         /* Use the inflater's inflate method to inflate our menu layout to this menu */
         inflater.inflate(R.menu.detail_menu, menu);
+
+        this.menu = menu;
+
+        getSupportLoaderManager().restartLoader(TASK_LOADER_ID, null, this);
+
         /* Return true so that the menu is displayed in the Toolbar */
         return super.onCreateOptionsMenu(menu);
     }
@@ -400,8 +424,115 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
             case R.id.action_share :
                 shareTrailer();
                 return true;
+            case R.id.action_favorite :
+                favoriteUnfavoriteMovie();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void favoriteUnfavoriteMovie(){
+
+        if(isFavorite != null){
+            String message;
+            if(isFavorite){
+                Uri uri = FavoriteMovieContract.FavoriteMovieEntry.buildFavoriteUriWithId(movie.getId());
+                getContentResolver().delete(uri, null, null);
+                menu.findItem(R.id.action_favorite).setIcon(getBaseContext().getResources().getDrawable(R.drawable.ic_favorite_border));
+                message = getString(R.string.unfavorite_message);
+                isFavorite = false;
+            }
+            else {
+                ContentValues contentValues = movieContentValue(movie);
+                // Insert the content values via a ContentResolver
+                Uri uri = getContentResolver().insert(FavoriteMovieContract.FavoriteMovieEntry.CONTENT_URI, contentValues);
+                menu.findItem(R.id.action_favorite).setIcon(getBaseContext().getResources().getDrawable(R.drawable.ic_favorite));
+                message = getString(R.string.favorite_message);
+                isFavorite = true;
+            }
+            Toast.makeText(DetailActivity.this, message, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return new AsyncTaskLoader<Cursor>(this) {
+
+            // Initialize a Cursor, this will hold all the task data
+            Cursor mTaskData = null;
+
+            // onStartLoading() is called when a loader first starts loading data
+            @Override
+            protected void onStartLoading() {
+                if (mTaskData != null) {
+                    // Delivers any previously loaded data immediately
+                    deliverResult(mTaskData);
+                } else {
+                    // Force a new load
+                    forceLoad();
+                }
+            }
+
+            // loadInBackground() performs asynchronous loading of data
+            @Override
+            public Cursor loadInBackground() {
+                try {
+                    return getContentResolver().query(FavoriteMovieContract.FavoriteMovieEntry.buildFavoriteUriWithId(movie.getId()),
+                            null,
+                            null,
+                            null,
+                            FavoriteMovieContract.FavoriteMovieEntry._ID);
+
+                } catch (Exception e) {
+                    Log.e(TAG, "Failed to asynchronously load data.");
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+
+            // deliverResult sends the result of the load, a Cursor, to the registered listener
+            public void deliverResult(Cursor data) {
+                mTaskData = data;
+                super.deliverResult(data);
+            }
+        };
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        isFavorite = false;
+
+        if (data != null && data.moveToFirst()) {
+            // update favorite button
+            menu.findItem(R.id.action_favorite).setIcon(getBaseContext().getResources().getDrawable(R.drawable.ic_favorite));
+            isFavorite = true;
+        }
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        menu.findItem(R.id.action_favorite).setIcon(getBaseContext().getResources().getDrawable(R.drawable.ic_favorite_border));
+    }
+
+
+    public ContentValues movieContentValue(Movie movie){
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(FavoriteMovieContract.FavoriteMovieEntry.COLUMN_VOTE_COUNT, movie.getVoteCount());
+        contentValues.put(FavoriteMovieContract.FavoriteMovieEntry.COLUMN_ID, movie.getId());
+        contentValues.put(FavoriteMovieContract.FavoriteMovieEntry.COLUMN_VIDEO, movie.getVideo());
+        contentValues.put(FavoriteMovieContract.FavoriteMovieEntry.COLUMN_VOTE_AVERAGE, movie.getVoteAverage());
+        contentValues.put(FavoriteMovieContract.FavoriteMovieEntry.COLUMN_TITLE, movie.getTitle());
+        contentValues.put(FavoriteMovieContract.FavoriteMovieEntry.COLUMN_POPULARITY, movie.getPopularity());
+        contentValues.put(FavoriteMovieContract.FavoriteMovieEntry.COLUMN_POSTER_PATH, movie.getPosterPath());
+        contentValues.put(FavoriteMovieContract.FavoriteMovieEntry.COLUMN_ORIGINAL_LANGUAGE, movie.getOriginalLanguage());
+        contentValues.put(FavoriteMovieContract.FavoriteMovieEntry.COLUMN_ORIGINAL_TITLE, movie.getOriginalTitle());
+        contentValues.put(FavoriteMovieContract.FavoriteMovieEntry.COLUMN_BACKDROP_PATH, movie.getBackdropPath());
+        contentValues.put(FavoriteMovieContract.FavoriteMovieEntry.COLUMN_ADULT, movie.getAdult());
+        contentValues.put(FavoriteMovieContract.FavoriteMovieEntry.COLUMN_OVERVIEW, movie.getOverview());
+        contentValues.put(FavoriteMovieContract.FavoriteMovieEntry.COLUMN_RELEASE_DATE, movie.getReleaseDate());
+        return contentValues;
     }
 }

@@ -10,6 +10,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
+import static com.rkndika.popularmovies.data.FavoriteMovieContract.FavoriteMovieEntry.COLUMN_ID;
 import static com.rkndika.popularmovies.data.FavoriteMovieContract.FavoriteMovieEntry.TABLE_NAME;
 
 public class FavoriteMovieContentProvider extends ContentProvider {
@@ -77,14 +78,79 @@ public class FavoriteMovieContentProvider extends ContentProvider {
     public Cursor query(@NonNull Uri uri, String[] projection, String selection,
                         String[] selectionArgs, String sortOrder) {
 
-        throw new UnsupportedOperationException("Not yet implemented");
+        // Get access to underlying database (read-only for query)
+        final SQLiteDatabase db = mFavoriteMovieDbHelper.getReadableDatabase();
+
+        // Write URI match code and set a variable to return a Cursor
+        int match = sUriMatcher.match(uri);
+        Cursor retCursor;
+
+        // Query for the tasks directory and write a default case
+        switch (match) {
+            // Query for the tasks directory
+            case MOVIES:
+                retCursor =  db.query(
+                        TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
+            case MOVIE_WITH_ID :
+                String movieId = uri.getLastPathSegment();
+                String[] selectionArguments = new String[]{movieId};
+                retCursor = db.query(
+                        TABLE_NAME,
+                        projection,
+                        COLUMN_ID + " = ? ",
+                        selectionArguments,
+                        null,
+                        null,
+                        sortOrder);
+
+                break;
+            // Default exception
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+
+        // Set a notification URI on the Cursor and return that Cursor
+        retCursor.setNotificationUri(getContext().getContentResolver(), uri);
+
+        // Return the desired Cursor
+        return retCursor;
     }
 
 
     @Override
     public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
 
-        throw new UnsupportedOperationException("Not yet implemented");
+        int numRowsDeleted;
+
+        switch (sUriMatcher.match(uri)) {
+
+            case MOVIE_WITH_ID:
+                String movieId = uri.getLastPathSegment();
+                String[] selectionArguments = new String[]{movieId};
+
+                numRowsDeleted = mFavoriteMovieDbHelper.getWritableDatabase().delete(
+                        TABLE_NAME,
+                        COLUMN_ID + " = ? ",
+                        selectionArguments);
+                break;
+
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+
+        /* If we actually deleted any rows, notify that a change has occurred to this URI */
+        if (numRowsDeleted != 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+
+        return numRowsDeleted;
     }
 
 
