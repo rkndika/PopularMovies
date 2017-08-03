@@ -1,9 +1,9 @@
 package com.rkndika.popularmovies;
 
-import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Parcelable;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.Uri;
@@ -22,12 +22,14 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.rkndika.popularmovies.adapter.ReviewAdapter;
 import com.rkndika.popularmovies.adapter.TrailerAdapter;
 import com.rkndika.popularmovies.data.FavoriteMovieContract;
+import com.rkndika.popularmovies.model.Review;
 import com.rkndika.popularmovies.model.Reviews;
 import com.rkndika.popularmovies.model.Trailer;
 import com.rkndika.popularmovies.model.Trailers;
@@ -37,6 +39,7 @@ import com.squareup.picasso.Picasso;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
 import com.rkndika.popularmovies.model.Movie;
 import com.rkndika.popularmovies.network.Config;
@@ -47,8 +50,12 @@ import retrofit2.Response;
 
 public class DetailActivity extends AppCompatActivity implements TrailerAdapter.TrailerAdapterOnClickHandler,
         LoaderManager.LoaderCallbacks<Cursor>{
-    private final static String YOUTUBE_APP = "vnd.youtube:";
-    private final static String YOUTUBE_WEB = "http://www.youtube.com/watch?v=";
+    private final static String YOUTUBE = "http://www.youtube.com/watch?v=";
+    private final static String SCROLLVIEW_STATE = "scrollViewState";
+    private final static String RECYCLERVIEW_REVIEW_STATE = "rvReviewState";
+    private final static String DATA_REVIEW_STATE = "dataReviewState";
+    private final static String RECYCLERVIEW_TRAILER_STATE = "rvTrailerState";
+    private final static String DATA_TRAILER_STATE = "dataTrailerState";
 
     private Movie movie;
 
@@ -58,6 +65,8 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
     private ProgressBar mLoadingIndicatorReview, mLoadingIndicatorTrailer;
     private ReviewAdapter mReviewAdapter;
     private TrailerAdapter mTrailerAdapter;
+
+    private ScrollView mContainer;
 
     private Menu menu;
 
@@ -73,17 +82,28 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
-        // get movie detail from clicked list
-        movie = getIntent().getExtras().getParcelable(MainActivity.PUT_EXTRA_MOVIES);
+        Bundle extras = getIntent().getExtras();
+        if(extras != null && extras.containsKey(MainActivity.PUT_EXTRA_MOVIES)){
+            // get movie detail from clicked list
+            movie = getIntent().getExtras().getParcelable(MainActivity.PUT_EXTRA_MOVIES);
+        }
 
         // initialize view
         initViews();
 
-        // load review data
-        loadReviewsData();
+        // if activity have savedInstanceState then showPreviousView
+        if(savedInstanceState != null){
+            showPreviousView(savedInstanceState);
+        }
+        // if activity haven't saveInstanceState
+        else {
+            // load review data
+            loadReviewsData();
 
-        // load trailer data
-        loadTrailerData();
+            // load trailer data
+            loadTrailerData();
+        }
+
     }
 
     private void initViews(){
@@ -94,6 +114,8 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
         mRecyclerViewTrailer = (RecyclerView) findViewById(R.id.rv_trailers);
         mErrorMessageTrailer = (TextView) findViewById(R.id.tv_error_message_trailer);
         mNoDataMessageTrailer = (TextView) findViewById(R.id.tv_no_data_message_trailer);
+
+        mContainer = (ScrollView) findViewById(R.id.sv_container);
 
         LinearLayoutManager layoutManagerReview = new LinearLayoutManager(this, LinearLayout.VERTICAL, false);
         LinearLayoutManager layoutManagerTrailer = new LinearLayoutManager(this, LinearLayout.VERTICAL, false);
@@ -138,8 +160,50 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
                 .placeholder(R.drawable.rec_grey)
                 .error(R.drawable.rec_grey)
                 .into(ivPoster);
+    }
 
+    private void showPreviousView(Bundle savedInstanceState){
+        // get data from previous data
+        ArrayList<Review> reviewList = savedInstanceState.getParcelableArrayList(DATA_REVIEW_STATE);
 
+        // if no data get from state
+        if(reviewList != null){
+            showReviewsDataView();
+            mReviewAdapter.setReviewsData(reviewList);
+
+            //set recyclerview position from previous position
+            Parcelable listReviewState = savedInstanceState.getParcelable(RECYCLERVIEW_REVIEW_STATE);
+            mRecyclerViewReview.getLayoutManager().onRestoreInstanceState(listReviewState);
+        }
+        else{
+            showErrorMessageReview();
+        }
+
+        // get data from previous data
+        ArrayList<Trailer> trailerList = savedInstanceState.getParcelableArrayList(DATA_TRAILER_STATE);
+
+        // if no data get from state
+        if(trailerList != null){
+            showTrailersDataView();
+            mTrailerAdapter.setTrailersData(trailerList);
+
+            //set recyclerview position from previous position
+            Parcelable listTrailerState = savedInstanceState.getParcelable(RECYCLERVIEW_TRAILER_STATE);
+            mRecyclerViewTrailer.getLayoutManager().onRestoreInstanceState(listTrailerState);
+        }
+        else{
+            showErrorMessageTrailer();
+        }
+
+        final int[] position = savedInstanceState.getIntArray(SCROLLVIEW_STATE);
+        if(position != null){
+            mContainer.post(new Runnable() {
+                @Override
+                public void run() {
+                    mContainer.smoothScrollTo(position[0], position[1]);
+                }
+            });
+        }
 
     }
 
@@ -374,15 +438,9 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
     }
 
     public void watchTrailer(String key){
-        Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(YOUTUBE_APP + key));
-        Intent webIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(YOUTUBE_WEB + key));
-
-        try {
-            startActivity(appIntent);
-        }
-        catch (ActivityNotFoundException ex){
-            startActivity(webIntent);
-        }
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(YOUTUBE + key));
+        startActivity(i);
     }
 
     public void shareTrailer(){
@@ -391,7 +449,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
             return;
         }
         Trailer trailer = mTrailerAdapter.getTrailersData().get(0);
-        String trailerUrl = YOUTUBE_WEB + trailer.getKey();
+        String trailerUrl = YOUTUBE + trailer.getKey();
         Intent i = new Intent(Intent.ACTION_SEND);
         i.setType(getString(R.string.share_url_type));
         i.putExtra(Intent.EXTRA_SUBJECT, trailer.getName());
@@ -534,5 +592,28 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
         contentValues.put(FavoriteMovieContract.FavoriteMovieEntry.COLUMN_OVERVIEW, movie.getOverview());
         contentValues.put(FavoriteMovieContract.FavoriteMovieEntry.COLUMN_RELEASE_DATE, movie.getReleaseDate());
         return contentValues;
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle savedInstanceState) {
+        // save state
+        savedInstanceState.putIntArray(SCROLLVIEW_STATE,
+                new int[]{mContainer.getScrollX(), mContainer.getScrollY()});
+
+        // save state list recyclerview review
+        Parcelable listStateReview = mRecyclerViewReview.getLayoutManager().onSaveInstanceState();
+        savedInstanceState.putParcelable(RECYCLERVIEW_REVIEW_STATE, listStateReview);
+
+        // save state adapter data review
+        savedInstanceState.putParcelableArrayList(DATA_REVIEW_STATE, mReviewAdapter.getReviewsData());
+
+        // save state list recyclerview trailer
+        Parcelable listStateTrailer = mRecyclerViewTrailer.getLayoutManager().onSaveInstanceState();
+        savedInstanceState.putParcelable(RECYCLERVIEW_TRAILER_STATE, listStateTrailer);
+
+        // save state adapter data trailer
+        savedInstanceState.putParcelableArrayList(DATA_TRAILER_STATE, mTrailerAdapter.getTrailersData());
+
+        super.onSaveInstanceState(savedInstanceState);
     }
 }

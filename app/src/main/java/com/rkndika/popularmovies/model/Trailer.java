@@ -1,9 +1,12 @@
 package com.rkndika.popularmovies.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Trailer {
+public class Trailer implements Parcelable {
 
     @SerializedName("id")
     @Expose
@@ -29,6 +32,30 @@ public class Trailer {
     @SerializedName("type")
     @Expose
     private String type;
+
+
+    public Trailer(Parcel in) {
+        id = in.readString();
+        iso6391 = in.readString();
+        iso31661 = in.readString();
+        key = in.readString();
+        name = in.readString();
+        site = in.readString();
+        size = in.readInt();
+        type = in.readString();
+    }
+
+    public static final Parcelable.Creator<Trailer> CREATOR = new Parcelable.Creator<Trailer>() {
+        @Override
+        public Trailer createFromParcel(Parcel in) {
+            return new Trailer(in);
+        }
+
+        @Override
+        public Trailer[] newArray(int size) {
+            return new Trailer[size];
+        }
+    };
 
     public String getId() {
         return id;
@@ -92,6 +119,23 @@ public class Trailer {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(iso6391);
+        dest.writeString(iso31661);
+        dest.writeString(key);
+        dest.writeString(name);
+        dest.writeString(site);
+        dest.writeInt(size);
+        dest.writeString(type);
     }
 
 }
