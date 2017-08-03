@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="THE_MOVIE_DB_API_KEY">f35e8fb6f1b62c3210ccce80f138d391</string>
+    <string name="THE_MOVIE_DB_API_KEY">YOUR_THE_MOVIE_DB_API_KEY</string>
 </resources>
