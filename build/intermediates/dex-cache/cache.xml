@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="false"
+        jar="/home/include/.gradle/caches/modules-2/files-2.1/com.squareup.picasso/picasso/2.5.2/7446d06ec8d4f7ffcc53f1da37c95f200dcb9387/picasso-2.5.2.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="7446d06ec8d4f7ffcc53f1da37c95f200dcb9387">
+        <dex dex="/media/include/DATA/Projects/Personal/Project PopularMovies/PopularMovies/app/build/intermediates/pre-dexed/debug/picasso-2.5.2_dda134e12f1095483b92dda8e01c87a85bc0153d.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/include/.android/build-cache/fd5c3a095b17755cfc6d5acfcab01a04a242be03/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="38789e20ace9ab7dbd00554bd2673ab424478d3b">
+        <dex dex="/media/include/DATA/Projects/Personal/Project PopularMovies/PopularMovies/app/build/intermediates/pre-dexed/debug/classes_d598ef9e54b389106c776da22042cd9ff1cde576.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/include/.android/build-cache/da21cd969103e3e57fd2bf8bce77ac3db9951c4b/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="da27a32db6af8954ee8061537c7d476fcb1df46f">
+        <dex dex="/media/include/DATA/Projects/Personal/Project PopularMovies/PopularMovies/app/build/intermediates/pre-dexed/debug/classes_f4564f80015231dfc57909a2102d0ecdab7c2089.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/include/.android/build-cache/a7a3841c9e9ca313d5df4208c31a0ed929dad284/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="d4cf6227dd6a2ceff0f7dcf0c324380b7abf2c28">
+        <dex dex="/media/include/DATA/Projects/Personal/Project PopularMovies/PopularMovies/app/build/intermediates/pre-dexed/debug/classes_a5a45331e996860ab646f627c0234b7701c2f10c.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/include/.android/build-cache/d811e1f9af61ed21901784fc18e24b31e6de478b/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="95519720620b553f63afc789beba9ad582807f7c">
+        <dex dex="/media/include/DATA/Projects/Personal/Project PopularMovies/PopularMovies/app/build/intermediates/pre-dexed/debug/classes_43b92fcb5d0fdf1318ba8c8d1c0d3059854dae6e.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/include/Android/Sdk/extras/android/m2repository/com/android/support/support-annotations/25.3.1/support-annotations-25.3.1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="bf8841d29fa39e077730e7a91222c2ce269fa7c9">
+        <dex dex="/media/include/DATA/Projects/Personal/Project PopularMovies/PopularMovies/app/build/intermediates/pre-dexed/debug/support-annotations-25.3.1_9313389ae5c7269bfc2015af62e1ce38fbfee0fc.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/include/.android/build-cache/9f325ffb54ad0ade879e66eea014c4761337ff0c/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="45f697922e6f072daa12f8a2995dc77ab03c11da">
+        <dex dex="/media/include/DATA/Projects/Personal/Project PopularMovies/PopularMovies/app/build/intermediates/pre-dexed/debug/classes_2af4d35bf627f0f67748b11a37064e60d8a3f1ce.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/include/.android/build-cache/d4702a8c7809204186a785b281d437e14638264e/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="4a26a1154d053ab11aaf4c3967c42a4d66390991">
+        <dex dex="/media/include/DATA/Projects/Personal/Project PopularMovies/PopularMovies/app/build/intermediates/pre-dexed/debug/classes_c60347dd4e4e6b4b1050cb993bf759be25bb22fe.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/include/.android/build-cache/b5a357ea7ed39726203f3a1963e44527c6036f29/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="efb8cb62d47d157c29d1521daac7eefd4cb881ee">
+        <dex dex="/media/include/DATA/Projects/Personal/Project PopularMovies/PopularMovies/app/build/intermediates/pre-dexed/debug/classes_0f89a397fd54b692dd59a67ef654ec9d30ac9806.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/include/.gradle/caches/modules-2/files-2.1/com.squareup.okhttp3/okhttp/3.6.0/69edde9fc4b01c9fd51d25b83428837478c27254/okhttp-3.6.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="69edde9fc4b01c9fd51d25b83428837478c27254">
+        <dex dex="/media/include/DATA/Projects/Personal/Project PopularMovies/PopularMovies/app/build/intermediates/pre-dexed/debug/okhttp-3.6.0_3725bee781ec26773a328471fc674299b105ccb8.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/include/.android/build-cache/25a53f1fb325212201b6b1bd867baf1f4c353590/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="914f5d3e3ace66080e59613708f06d129a222e25">
+        <dex dex="/media/include/DATA/Projects/Personal/Project PopularMovies/PopularMovies/app/build/intermediates/pre-dexed/debug/classes_12224cf0c1323aa5706019907f18c8e73e7159cc.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/include/.android/build-cache/be2c656ff17b840db026e301a2504a9c929d15ed/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="052f5f840f21174a3ecf6544130194e2652cbb73">
+        <dex dex="/media/include/DATA/Projects/Personal/Project PopularMovies/PopularMovies/app/build/intermediates/pre-dexed/debug/classes_a2d5183e3b14d86e06d8eda0c9a96e5f1f457648.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/include/.android/build-cache/f912516e429a5a98b80df7d0d83665c43325a075/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="150252b33b00274cc868578ade018fda0d43a3eb">
+        <dex dex="/media/include/DATA/Projects/Personal/Project PopularMovies/PopularMovies/app/build/intermediates/pre-dexed/debug/classes_8e0b24409da9d7aa66c62a2d807173c883e7e2f5.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/include/.gradle/caches/modules-2/files-2.1/com.squareup.retrofit2/converter-gson/2.2.0/a09926806199499a20b2f5168779499abfa33342/converter-gson-2.2.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="a09926806199499a20b2f5168779499abfa33342">
+        <dex dex="/media/include/DATA/Projects/Personal/Project PopularMovies/PopularMovies/app/build/intermediates/pre-dexed/debug/converter-gson-2.2.0_ae86632105a859d4428aad197122f54d4fdd0002.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/include/.gradle/caches/modules-2/files-2.1/com.squareup.okio/okio/1.11.0/840897fcd7223a8143f1d9b6f69714e7be34fd50/okio-1.11.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="840897fcd7223a8143f1d9b6f69714e7be34fd50">
+        <dex dex="/media/include/DATA/Projects/Personal/Project PopularMovies/PopularMovies/app/build/intermediates/pre-dexed/debug/okio-1.11.0_ac9faf69757d56dee78e3b63e997dfaadfc3d049.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/include/.android/build-cache/2d49cb691a3a73298dace64341c476cbd63e83f7/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="6ef31f1555bb4cc513ec8d52711365a8b89f3600">
+        <dex dex="/media/include/DATA/Projects/Personal/Project PopularMovies/PopularMovies/app/build/intermediates/pre-dexed/debug/classes_c6d935b13b7cf84ef1e55ed7f01a8666a07aead4.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/include/.android/build-cache/16d77e6d9332e23230c1e5b60216f37d6469dc3c/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="47635644d0d5c103c1dd8360549eb9ba3225c7d3">
+        <dex dex="/media/include/DATA/Projects/Personal/Project PopularMovies/PopularMovies/app/build/intermediates/pre-dexed/debug/classes_c1382503f406ff9fd47501eb274a1103bb84dce1.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/include/.android/build-cache/419098e92460a2bf13019fab01a961293fd076df/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="d7c42c80f6509b9ea4db28ca7859ffae08ec5741">
+        <dex dex="/media/include/DATA/Projects/Personal/Project PopularMovies/PopularMovies/app/build/intermediates/pre-dexed/debug/classes_52b15d00d34145afb03bc9013b1f644fd510bcde.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/include/.gradle/caches/modules-2/files-2.1/com.squareup.retrofit2/retrofit/2.2.0/41e67dba73c3347e4503761642c39d0e06ca1f2/retrofit-2.2.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="041e67dba73c3347e4503761642c39d0e06ca1f2">
+        <dex dex="/media/include/DATA/Projects/Personal/Project PopularMovies/PopularMovies/app/build/intermediates/pre-dexed/debug/retrofit-2.2.0_41c54bce22a77b6516bc6d1301f4a9f7922c1732.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/include/.gradle/caches/modules-2/files-2.1/com.google.code.gson/gson/2.7/751f548c85fa49f330cecbb1875893f971b33c4e/gson-2.7.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="751f548c85fa49f330cecbb1875893f971b33c4e">
+        <dex dex="/media/include/DATA/Projects/Personal/Project PopularMovies/PopularMovies/app/build/intermediates/pre-dexed/debug/gson-2.7_6475ad90be6fbe6b1e4e8aee0124e65726c3083d.jar" />
+    </item>
+
+</items>
